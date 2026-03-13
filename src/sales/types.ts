@@ -283,6 +283,10 @@ export interface ContactBase {
   updated_at: string;
 }
 
+export interface CreateContactBaseParams {
+  name: string;
+}
+
 // ============================================================
 // PERSONS
 // ============================================================

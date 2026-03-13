@@ -287,7 +287,7 @@ org = client.sales.create_organization(
 | Deals | `createDeal`, `listDeals`, `getDeal`, `updateDeal`, `deleteDeal`, `moveDealStage` |
 | Activities | `createActivity`, `listActivities`, `getActivity`, `updateActivity`, `deleteActivity`, `completeActivity` |
 | Notes | `createNote`, `listNotes`, `getNote`, `updateNote`, `deleteNote` |
-| Contact Bases | `list_contact_bases`, `get_contact_base` |
+| Contact Bases | `create_contact_base`, `list_contact_bases`, `get_contact_base` |
 | Persons | `createPerson`, `listPersons`, `getPerson`, `updatePerson`, `deletePerson` |
 | Organizations | `createOrganization`, `listOrganizations`, `getOrganization`, `updateOrganization`, `deleteOrganization` |
 
