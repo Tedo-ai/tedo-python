@@ -24,7 +24,6 @@ import type {
   UpdateNoteParams,
   ListNotesParams,
   ContactBase,
-  CreateContactBaseParams,
   Person,
   CreatePersonParams,
   UpdatePersonParams,
@@ -352,13 +351,6 @@ export class SalesService {
   // ============================================================
   // CONTACT BASES
   // ============================================================
-
-  /** Create a new contact base. */
-  async createContactBase(
-    params: CreateContactBaseParams,
-  ): Promise<ContactBase> {
-    return this.req<ContactBase>("POST", "/sales/v1/contact-bases", params);
-  }
 
   /** List all contact bases. */
   async listContactBases(): Promise<{

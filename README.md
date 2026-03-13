@@ -257,20 +257,24 @@ await client.sales.moveDealStage(deal.id, newStage.id);
 
 Persons and organizations belong to a contact base:
 
-```typescript
-const base = await client.sales.createContactBase({ name: "Main contacts" });
+```python
+# List contact bases (each workspace has a default one)
+bases = client.sales.list_contact_bases()
+base_id = bases[0].id
 
-const person = await client.sales.createPerson(base.id, {
-  first_name: "Jane",
-  last_name: "Smith",
-  email: "jane@acme.com",
-  phone: "+1-555-0100",
-});
+person = client.sales.create_person(
+    contact_base_id=base_id,
+    first_name="Jane",
+    last_name="Smith",
+    email="jane@acme.com",
+    phone="+1-555-0100",
+)
 
-const org = await client.sales.createOrganization(base.id, {
-  name: "Acme Corp",
-  website: "https://acme.com",
-});
+org = client.sales.create_organization(
+    contact_base_id=base_id,
+    name="Acme Corp",
+    website="https://acme.com",
+)
 ```
 
 #### Method reference
@@ -283,7 +287,7 @@ const org = await client.sales.createOrganization(base.id, {
 | Deals | `createDeal`, `listDeals`, `getDeal`, `updateDeal`, `deleteDeal`, `moveDealStage` |
 | Activities | `createActivity`, `listActivities`, `getActivity`, `updateActivity`, `deleteActivity`, `completeActivity` |
 | Notes | `createNote`, `listNotes`, `getNote`, `updateNote`, `deleteNote` |
-| Contact Bases | `createContactBase`, `listContactBases`, `getContactBase` |
+| Contact Bases | `list_contact_bases`, `get_contact_base` |
 | Persons | `createPerson`, `listPersons`, `getPerson`, `updatePerson`, `deletePerson` |
 | Organizations | `createOrganization`, `listOrganizations`, `getOrganization`, `updateOrganization`, `deleteOrganization` |
 

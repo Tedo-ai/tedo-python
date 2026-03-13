@@ -77,7 +77,6 @@ export type {
   UpdateNoteParams,
   ListNotesParams,
   ContactBase,
-  CreateContactBaseParams,
   Person,
   CreatePersonParams,
   UpdatePersonParams,
