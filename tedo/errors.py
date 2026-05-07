@@ -1,54 +1,97 @@
 """Tedo SDK error classes."""
 
+from __future__ import annotations
+
+from typing import Any
+
 
 class TedoError(Exception):
     """Base error for all Tedo API errors."""
 
-    def __init__(self, message: str, status_code: int = 0):
-        self.message = message
-        self.status_code = status_code
+    code: str
+    status_code: int
+    details: dict[str, Any] | None
+    request_id: str | None
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: str = "unknown_error",
+        status_code: int = 0,
+        details: dict[str, Any] | None = None,
+        request_id: str | None = None,
+    ) -> None:
         super().__init__(message)
-
-
-class NotFoundError(TedoError):
-    """Resource not found (404)."""
-
-    def __init__(self, message: str = "Not found"):
-        super().__init__(message, 404)
+        self.message = message
+        self.code = code
+        self.status_code = status_code
+        self.details = details
+        self.request_id = request_id
 
 
 class ValidationError(TedoError):
-    """Validation error (422)."""
-
-    def __init__(self, message: str = "Validation error"):
-        super().__init__(message, 422)
+    """400 Bad Request."""
 
 
 class AuthenticationError(TedoError):
-    """Authentication failed (401)."""
+    """401 Unauthorized."""
 
-    def __init__(self, message: str = "Authentication failed"):
-        super().__init__(message, 401)
+
+class PermissionError(TedoError):
+    """403 Forbidden."""
+
+
+class NotFoundError(TedoError):
+    """404 Not Found."""
 
 
 class RateLimitError(TedoError):
-    """Rate limit exceeded (429)."""
-
-    def __init__(self, message: str = "Rate limit exceeded"):
-        super().__init__(message, 429)
+    """429 Too Many Requests."""
 
 
-def parse_error(status_code: int, body: dict) -> TedoError:
-    """Parse an API error response into the appropriate exception."""
-    message = body.get("error", body.get("message", f"API error {status_code}"))
+def parse_error(status_code: int, body: object) -> TedoError:
+    """Parse an API error response into an idiomatic exception."""
 
-    if status_code == 404:
-        return NotFoundError(message)
-    elif status_code == 422:
-        return ValidationError(message)
+    code = "unknown_error"
+    message = f"API error {status_code}"
+    details: dict[str, Any] | None = None
+    request_id: str | None = None
+
+    if isinstance(body, dict):
+        raw_code = body.get("code", body.get("error"))
+        if isinstance(raw_code, str) and raw_code:
+            code = raw_code
+        raw_message = body.get("message", body.get("error"))
+        if isinstance(raw_message, str) and raw_message:
+            message = raw_message
+        raw_details = body.get("details")
+        if isinstance(raw_details, dict):
+            details = dict(raw_details)
+        raw_request_id = body.get("request_id")
+        if isinstance(raw_request_id, str):
+            request_id = raw_request_id
+    elif isinstance(body, str) and body:
+        message = body
+
+    error_cls: type[TedoError]
+    if status_code == 400:
+        error_cls = ValidationError
     elif status_code == 401:
-        return AuthenticationError(message)
+        error_cls = AuthenticationError
+    elif status_code == 403:
+        error_cls = PermissionError
+    elif status_code == 404:
+        error_cls = NotFoundError
     elif status_code == 429:
-        return RateLimitError(message)
+        error_cls = RateLimitError
     else:
-        return TedoError(message, status_code)
+        error_cls = TedoError
+
+    return error_cls(
+        message,
+        code=code,
+        status_code=status_code,
+        details=details,
+        request_id=request_id,
+    )

@@ -20,4 +20,6 @@ Thumbs.db
 *.egg-info/
 __pycache__/
 *.pyc
+.mypy_cache/
+.pytest_cache/
 venv/
