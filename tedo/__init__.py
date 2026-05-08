@@ -1,57 +1,100 @@
 """Tedo Python SDK."""
 
-import requests
-from .errors import TedoError, parse_error
-from .billing import BillingService
+from .client import RetryConfig, Tedo
+from .errors import (
+    AuthenticationError,
+    NotFoundError,
+    PermissionError,
+    RateLimitError,
+    TedoError,
+    ValidationError,
+)
+from .pagination import CursorPage
+from .projects import (
+    PROJECT_PRIORITY_HIGH,
+    PROJECT_PRIORITY_LOW,
+    PROJECT_PRIORITY_MEDIUM,
+    PROJECT_PRIORITY_NONE,
+    PROJECT_PRIORITY_URGENT,
+    PROJECT_STATUS_CATEGORY_CANCELED,
+    PROJECT_STATUS_CATEGORY_COMPLETED,
+    PROJECT_STATUS_CATEGORY_IN_PROGRESS,
+    PROJECT_STATUS_CATEGORY_START,
+    AttachFileParams,
+    CreateProjectParams,
+    CreateStatusParams,
+    CreateWorkItemParams,
+    CreateWorkItemTypeParams,
+    DeleteResult,
+    ListActivityParams,
+    ListPageParams,
+    ListProjectsParams,
+    ListStatusesParams,
+    ListWorkItemsParams,
+    NextDisplayID,
+    PeekNextDisplayIDParams,
+    PriorityLevel,
+    Project,
+    ProjectAttachment,
+    ProjectComment,
+    ProjectStatusCategory,
+    RequestOptions,
+    UpdatePriorityLevelParams,
+    UpdateProjectParams,
+    UpdateStatusParams,
+    UpdateWorkItemParams,
+    UpdateWorkItemTypeParams,
+    WorkItem,
+    WorkItemActivity,
+    WorkItemType,
+    WorkflowStatus,
+)
 
-
-class Tedo:
-    """Tedo API client.
-
-    Usage:
-        client = Tedo(api_key="tedo_live_...", base_url="https://api.tedo.ai")
-        plans = client.billing.list_plans()
-    """
-
-    def __init__(self, api_key: str, base_url: str = "https://api.tedo.ai",
-                 verify_ssl: bool = True):
-        self._api_key = api_key
-        self._base_url = base_url.rstrip("/")
-        self._verify_ssl = verify_ssl
-        self._session = requests.Session()
-        self._session.headers.update({
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        })
-        self._session.verify = verify_ssl
-
-        self.billing = BillingService(self)
-
-    def _request(self, method: str, path: str, body: dict = None) -> dict:
-        """Send a request and return the parsed JSON body."""
-        url = f"{self._base_url}{path}"
-        resp = self._session.request(method, url, json=body)
-
-        if resp.status_code >= 400:
-            try:
-                error_body = resp.json()
-            except Exception:
-                error_body = {"error": resp.text}
-            raise parse_error(resp.status_code, error_body)
-
-        if resp.status_code == 204 or not resp.content:
-            return {}
-        return resp.json()
-
-    def _request_void(self, method: str, path: str, body: dict = None):
-        """Send a request that returns no body."""
-        url = f"{self._base_url}{path}"
-        resp = self._session.request(method, url, json=body)
-
-        if resp.status_code >= 400:
-            try:
-                error_body = resp.json()
-            except Exception:
-                error_body = {"error": resp.text}
-            raise parse_error(resp.status_code, error_body)
+__all__ = [
+    "AttachFileParams",
+    "AuthenticationError",
+    "CreateProjectParams",
+    "CreateStatusParams",
+    "CreateWorkItemParams",
+    "CreateWorkItemTypeParams",
+    "CursorPage",
+    "DeleteResult",
+    "ListActivityParams",
+    "ListPageParams",
+    "ListProjectsParams",
+    "ListStatusesParams",
+    "ListWorkItemsParams",
+    "NextDisplayID",
+    "NotFoundError",
+    "PROJECT_PRIORITY_HIGH",
+    "PROJECT_PRIORITY_LOW",
+    "PROJECT_PRIORITY_MEDIUM",
+    "PROJECT_PRIORITY_NONE",
+    "PROJECT_PRIORITY_URGENT",
+    "PROJECT_STATUS_CATEGORY_CANCELED",
+    "PROJECT_STATUS_CATEGORY_COMPLETED",
+    "PROJECT_STATUS_CATEGORY_IN_PROGRESS",
+    "PROJECT_STATUS_CATEGORY_START",
+    "PeekNextDisplayIDParams",
+    "PermissionError",
+    "PriorityLevel",
+    "Project",
+    "ProjectAttachment",
+    "ProjectComment",
+    "ProjectStatusCategory",
+    "RateLimitError",
+    "RequestOptions",
+    "RetryConfig",
+    "Tedo",
+    "TedoError",
+    "UpdatePriorityLevelParams",
+    "UpdateProjectParams",
+    "UpdateStatusParams",
+    "UpdateWorkItemParams",
+    "UpdateWorkItemTypeParams",
+    "ValidationError",
+    "WorkItem",
+    "WorkItemActivity",
+    "WorkItemType",
+    "WorkflowStatus",
+]
